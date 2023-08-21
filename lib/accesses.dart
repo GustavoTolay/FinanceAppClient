@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter_app/routes/transactions_route.dart";
 
 class AccessesWidget extends StatelessWidget {
   const AccessesWidget({
@@ -41,7 +42,14 @@ class AccessesWidget extends StatelessWidget {
                         ),
                         child: InkWell(
                           splashColor: Colors.grey,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const TransactionRoute()),
+                            );
+                          },
                           child: const SizedBox(
                             child: Center(
                               child: Row(
@@ -71,8 +79,8 @@ class AccessesWidget extends StatelessWidget {
                         elevation: 0,
                         shape: const RoundedRectangleBorder(
                             side: BorderSide(color: Colors.blue),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: InkWell(
                           onTap: () {},
                           splashColor: Colors.grey,
@@ -84,8 +92,7 @@ class AccessesWidget extends StatelessWidget {
                                     flex: 1,
                                     child: Icon(
                                       Icons.monetization_on,
-                                      color: Color.fromARGB(
-                                          255, 255, 193, 22),
+                                      color: Color.fromARGB(255, 255, 193, 22),
                                     ),
                                   ),
                                   Expanded(
@@ -112,8 +119,8 @@ class AccessesWidget extends StatelessWidget {
                         elevation: 0,
                         shape: const RoundedRectangleBorder(
                             side: BorderSide(color: Colors.blue),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: InkWell(
                           onTap: () {},
                           splashColor: Colors.grey,
@@ -146,8 +153,8 @@ class AccessesWidget extends StatelessWidget {
                         elevation: 0,
                         shape: const RoundedRectangleBorder(
                             side: BorderSide(color: Colors.blue),
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(10))),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
                         child: InkWell(
                           onTap: () {},
                           splashColor: Colors.grey,
@@ -158,8 +165,7 @@ class AccessesWidget extends StatelessWidget {
                                   Expanded(
                                     flex: 1,
                                     child: Icon(
-                                      Icons
-                                          .sim_card_download_rounded,
+                                      Icons.sim_card_download_rounded,
                                       color: Colors.red,
                                     ),
                                   ),
