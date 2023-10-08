@@ -4,6 +4,7 @@ class Transaction {
   final int category_id;
   final int quantity;
   final bool resolved;
+  final bool is_income;
   final String created;
 
   const Transaction({
@@ -12,6 +13,7 @@ class Transaction {
     required this.category_id,
     required this.quantity,
     required this.resolved,
+    required this.is_income,
     required this.created,
   });
 
@@ -22,6 +24,7 @@ class Transaction {
       category_id: json["category_id"],
       quantity: json["quantity"],
       resolved: json["resolved"],
+      is_income: json["is_income"],
       created: json["created"],
     );
   }
