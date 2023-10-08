@@ -2,35 +2,7 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
-
-class Transaction {
-  final int id;
-  final String concept;
-  final int category_id;
-  final int quantity;
-  final bool resolved;
-  final String created;
-
-  const Transaction({
-    required this.id,
-    required this.concept,
-    required this.category_id,
-    required this.quantity,
-    required this.resolved,
-    required this.created,
-  });
-
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
-      id: json["id"],
-      concept: json["concept"],
-      category_id: json["category_id"],
-      quantity: json["quantity"],
-      resolved: json["resolved"],
-      created: json["created"],
-    );
-  }
-}
+import "package:flutter_app/schemas.dart";
 
 var url = Uri.parse("http://localhost:8000/transactions");
 
@@ -81,19 +53,11 @@ class _TransactionRouteState extends State<TransactionRoute> {
                     padding:
                         const EdgeInsets.fromLTRB(20.0, 120.0, 20.0, 120.0),
                     child: ElevatedButton.icon(
-                        onPressed: () => null,
-                        icon: const Icon(Icons.dashboard_customize_rounded),
-                        label: const Text("Agregar Categoria")),
+                      onPressed: () => {},
+                      icon: const Icon(Icons.dashboard_customize_rounded),
+                      label: const Text("Agregar Categoria"),
+                    ),
                   );
-                  // return Card(
-                  //   elevation: 8.0,
-                  //   margin: EdgeInsets.all(4.0),
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(15)),
-                  //   child: Center(
-                  //     child: Icon(Icons.add),
-                  //   ),
-                  // );
                 }
                 return Card(
                   elevation: 8.0,
@@ -110,8 +74,9 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             Text(
                               snapshot.data![index - 1].created.toString(),
                               style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.normal),
+                                color: Colors.green,
+                                fontWeight: FontWeight.normal,
+                              ),
                               textScaleFactor: 1.2,
                               textAlign: TextAlign.end,
                             ),
