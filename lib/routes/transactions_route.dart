@@ -11,7 +11,9 @@ Future<List<Transaction>> fetchData() async {
   final List<dynamic> decodedList = jsonDecode(response.body);
   final List<Transaction> transactionList = [];
   decodedList.forEach((transaction) {
-    transactionList.add(Transaction.fromJson(transaction));
+    transactionList.add(
+      Transaction.fromJson(transaction),
+    );
   });
   return transactionList;
 }

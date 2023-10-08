@@ -24,7 +24,7 @@ class Transaction {
       id: json["id"],
       concept: json["concept"],
       category_id: json["category_id"],
-      category: json["category"],
+      category: Category.fromJson(json["category"]),
       quantity: json["quantity"],
       resolved: json["resolved"],
       is_income: json["is_income"],
@@ -41,4 +41,11 @@ class Category {
     required this.id,
     required this.name,
   });
+
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json["id"],
+      name: json["name"],
+    );
+  }
 }
