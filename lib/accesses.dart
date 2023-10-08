@@ -47,7 +47,7 @@ class AccessesWidget extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const TransactionRoute()),
+                                      TransactionRoute()),
                             );
                           },
                           child: const SizedBox(
