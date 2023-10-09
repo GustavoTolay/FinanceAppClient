@@ -48,16 +48,14 @@ class _TransactionRouteState extends State<TransactionRoute> {
           if (snapshot.hasError) return const Text("error in the fetch");
           if (snapshot.hasData) {
             return GridView.count(
-              crossAxisCount: 4,
+              crossAxisCount: 5,
               children: List.generate(snapshot.data!.length + 1, (index) {
                 if (index == 0) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(20.0, 120.0, 20.0, 120.0),
+                  return Center(
                     child: ElevatedButton.icon(
                       onPressed: () => {},
                       icon: const Icon(Icons.dashboard_customize_rounded),
-                      label: const Text("Agregar Categoria"),
+                      label: const Text("Agregar Transacción"),
                     ),
                   );
                 }
@@ -92,10 +90,68 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ),
                           ],
                         ),
+                        const Spacer(),
+                        const Text(
+                          "Concepto:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(snapshot.data![index - 1].concept.toString()),
-                        Text(snapshot.data![index - 1].category_id.toString()),
-                        Text(snapshot.data![index - 1].created.toString()),
-                        Text(snapshot.data![index - 1].resolved.toString()),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            const Text(
+                              "Categoria:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            Text(snapshot.data![index - 1].category.name
+                                .toString())
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "Estado:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.circle,
+                              size: 14,
+                              color: snapshot.data![index - 1].resolved
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                            Text(
+                              snapshot.data![index - 1].resolved
+                                  ? " Completado"
+                                  : " Pendiente",
+                              style: TextStyle(
+                                color: snapshot.data![index - 1].resolved
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => {},
+                              child: Icon(Icons.edit_square),
+                            ),
+                            Spacer(),
+                            ElevatedButton(
+                              onPressed: () => {},
+                              child: Icon(Icons.delete_forever),
+                              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                            ),
+
+                          ],
+                        ),
                       ],
                     ),
                   ),
