@@ -10,16 +10,16 @@ Future<List<Category>> fetchData() async {
   final response = await http.get(url);
   final List<dynamic> decodedList = jsonDecode(response.body);
   final List<Category> categoryList = [];
-  decodedList.forEach((category) {
+  for (var category in decodedList) {
     categoryList.add(
       Category.fromJson(category),
     );
-  });
+  }
   return categoryList;
 }
 
 class CreateTransaction extends StatefulWidget {
-  CreateTransaction({
+  const CreateTransaction({
     super.key,
   });
 
@@ -35,14 +35,15 @@ class _CreateTransactionState extends State<CreateTransaction> {
 
   late String selectedCategory;
 
-  late Future<List<Category>> CategoryData;
+  late Future<List<Category>> categoryData;
 
   @override
   void initState() {
     super.initState();
-    CategoryData = fetchData();
+    categoryData = fetchData();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -63,10 +64,10 @@ class _CreateTransactionState extends State<CreateTransaction> {
                 validator: (value) {
                   // Only an integer number
                   final pattern = RegExp(r"^[0-9]+$");
-                  if(value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty) {
                     return "Completa este campo";
                   }
-                  if(!pattern.hasMatch(value)) {
+                  if (!pattern.hasMatch(value)) {
                     return "Solo un número entero";
                   }
                   return null;
@@ -82,11 +83,12 @@ class _CreateTransactionState extends State<CreateTransaction> {
                 ),
                 validator: (value) {
                   // Only words/numbers separated by one space and , or .
-                  final pattern = RegExp(r"^([A-Za-z0-9],?\.?[ ]?)+$", dotAll: true);
-                  if(value == null || value.isEmpty) {
+                  final pattern =
+                      RegExp(r"^([A-Za-z0-9],?\.?[ ]?)+$");
+                  if (value == null || value.isEmpty) {
                     return "Completa este campo";
                   }
-                  if(!pattern.hasMatch(value)) {
+                  if (!pattern.hasMatch(value)) {
                     return "Solo letras, números y espacios";
                   }
                   return null;
@@ -130,24 +132,24 @@ class _CreateTransactionState extends State<CreateTransaction> {
               ),
             ),
             FutureBuilder(
-                future: CategoryData,
+                future: categoryData,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Text("Failed to fetch data");
                   }
                   if (snapshot.hasData) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 16),
                       child: DropdownButtonFormField<String>(
                         validator: (value) {
-                          if(value == null || value.isEmpty) {
+                          if (value == null || value.isEmpty) {
                             return "Seleccione una categoria";
                           }
                           return null;
                         },
                         onChanged: (value) {},
-                        items:
-                            snapshot.data!.map<DropdownMenuItem<String>>(
+                        items: snapshot.data!.map<DropdownMenuItem<String>>(
                           (category) {
                             return DropdownMenuItem<String>(
                               value: category.id.toString(),
@@ -164,11 +166,11 @@ class _CreateTransactionState extends State<CreateTransaction> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                   if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Validated Form')),
-                  );
-                }
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Validated Form')),
+                    );
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
