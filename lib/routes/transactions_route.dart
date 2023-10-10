@@ -3,6 +3,7 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
 import "package:flutter_app/schemas.dart";
+import 'package:flutter_app/routes/create_transaction.dart';
 
 var url = Uri.parse("http://localhost:8000/transactions");
 
@@ -53,7 +54,12 @@ class _TransactionRouteState extends State<TransactionRoute> {
                 if (index == 0) {
                   return Center(
                     child: ElevatedButton.icon(
-                      onPressed: () => {},
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateTransaction(),
+                        ),
+                      ),
                       icon: const Icon(Icons.dashboard_customize_rounded),
                       label: const Text("Agregar Transacción"),
                     ),
@@ -147,9 +153,10 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ElevatedButton(
                               onPressed: () => {},
                               child: Icon(Icons.delete_forever),
-                              style: ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(Colors.red)),
                             ),
-
                           ],
                         ),
                       ],
