@@ -28,7 +28,7 @@ class CreateTransaction extends StatefulWidget {
 }
 
 class _CreateTransactionState extends State<CreateTransaction> {
-  final _formKey = GlobalKey();
+  final _formKey = GlobalKey<FormState>();
   // Variables to form checkboxes
   bool is_income = false;
   bool resolved = false;
@@ -60,6 +60,17 @@ class _CreateTransactionState extends State<CreateTransaction> {
                   border: UnderlineInputBorder(),
                   labelText: 'Cantidad:',
                 ),
+                validator: (value) {
+                  // Only an integer number
+                  final pattern = RegExp(r"^[0-9]+$");
+                  if(value == null || value.isEmpty) {
+                    return "Completa este campo";
+                  }
+                  if(!pattern.hasMatch(value)) {
+                    return "Solo un número entero";
+                  }
+                  return null;
+                },
               ),
             ),
             Padding(
@@ -69,6 +80,17 @@ class _CreateTransactionState extends State<CreateTransaction> {
                   border: UnderlineInputBorder(),
                   labelText: 'Concepto:',
                 ),
+                validator: (value) {
+                  // Only words/numbers separated by one space and , or .
+                  final pattern = RegExp(r"^([A-Za-z0-9],?\.?[ ]?)+$", dotAll: true);
+                  if(value == null || value.isEmpty) {
+                    return "Completa este campo";
+                  }
+                  if(!pattern.hasMatch(value)) {
+                    return "Solo letras, números y espacios";
+                  }
+                  return null;
+                },
               ),
             ),
             Padding(
@@ -114,24 +136,26 @@ class _CreateTransactionState extends State<CreateTransaction> {
                     return const Text("Failed to fetch data");
                   }
                   if (snapshot.hasData) {
-                    return DropdownMenu<String>(
-                      initialSelection: snapshot.data!.first.name,
-                      onSelected: (String? value) {
-                        setState(
-                          () {
-                            selectedCategory = value!;
-                          },
-                        );
-                      },
-                      dropdownMenuEntries:
-                          snapshot.data!.map<DropdownMenuEntry<String>>(
-                        (category) {
-                          return DropdownMenuEntry<String>(
-                            value: category.name,
-                            label: category.name,
-                          );
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+                      child: DropdownButtonFormField<String>(
+                        validator: (value) {
+                          if(value == null || value.isEmpty) {
+                            return "Seleccione una categoria";
+                          }
+                          return null;
                         },
-                      ).toList(),
+                        onChanged: (value) {},
+                        items:
+                            snapshot.data!.map<DropdownMenuItem<String>>(
+                          (category) {
+                            return DropdownMenuItem<String>(
+                              value: category.id.toString(),
+                              child: Text(category.name),
+                            );
+                          },
+                        ).toList(),
+                      ),
                     );
                   }
                   return const Text("Loading...");
@@ -139,7 +163,13 @@ class _CreateTransactionState extends State<CreateTransaction> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                   if (_formKey.currentState!.validate()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Validated Form')),
+                  );
+                }
+                },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
