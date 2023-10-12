@@ -2,35 +2,8 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:http/http.dart" as http;
-
-class Transaction {
-  final int id;
-  final String concept;
-  final int category_id;
-  final int quantity;
-  final bool resolved;
-  final String created;
-
-  const Transaction({
-    required this.id,
-    required this.concept,
-    required this.category_id,
-    required this.quantity,
-    required this.resolved,
-    required this.created,
-  });
-
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
-      id: json["id"],
-      concept: json["concept"],
-      category_id: json["category_id"],
-      quantity: json["quantity"],
-      resolved: json["resolved"],
-      created: json["created"],
-    );
-  }
-}
+import "package:flutter_app/schemas.dart";
+import 'package:flutter_app/routes/create_transaction.dart';
 
 var url = Uri.parse("http://localhost:8000/transactions");
 
@@ -39,7 +12,9 @@ Future<List<Transaction>> fetchData() async {
   final List<dynamic> decodedList = jsonDecode(response.body);
   final List<Transaction> transactionList = [];
   decodedList.forEach((transaction) {
-    transactionList.add(Transaction.fromJson(transaction));
+    transactionList.add(
+      Transaction.fromJson(transaction),
+    );
   });
   return transactionList;
 }
@@ -74,26 +49,21 @@ class _TransactionRouteState extends State<TransactionRoute> {
           if (snapshot.hasError) return const Text("error in the fetch");
           if (snapshot.hasData) {
             return GridView.count(
-              crossAxisCount: 4,
+              crossAxisCount: 5,
               children: List.generate(snapshot.data!.length + 1, (index) {
                 if (index == 0) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(20.0, 120.0, 20.0, 120.0),
+                  return Center(
                     child: ElevatedButton.icon(
-                        onPressed: () => null,
-                        icon: const Icon(Icons.dashboard_customize_rounded),
-                        label: const Text("Agregar Categoria")),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateTransaction(),
+                        ),
+                      ),
+                      icon: const Icon(Icons.dashboard_customize_rounded),
+                      label: const Text("Agregar Transacción"),
+                    ),
                   );
-                  // return Card(
-                  //   elevation: 8.0,
-                  //   margin: EdgeInsets.all(4.0),
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(15)),
-                  //   child: Center(
-                  //     child: Icon(Icons.add),
-                  //   ),
-                  // );
                 }
                 return Card(
                   elevation: 8.0,
@@ -110,8 +80,9 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             Text(
                               snapshot.data![index - 1].created.toString(),
                               style: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.normal),
+                                color: Colors.green,
+                                fontWeight: FontWeight.normal,
+                              ),
                               textScaleFactor: 1.2,
                               textAlign: TextAlign.end,
                             ),
@@ -125,10 +96,69 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ),
                           ],
                         ),
+                        const Spacer(),
+                        const Text(
+                          "Concepto:",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         Text(snapshot.data![index - 1].concept.toString()),
-                        Text(snapshot.data![index - 1].category_id.toString()),
-                        Text(snapshot.data![index - 1].created.toString()),
-                        Text(snapshot.data![index - 1].resolved.toString()),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            const Text(
+                              "Categoria:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            Text(snapshot.data![index - 1].category.name
+                                .toString())
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "Estado:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.circle,
+                              size: 14,
+                              color: snapshot.data![index - 1].resolved
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                            Text(
+                              snapshot.data![index - 1].resolved
+                                  ? " Completado"
+                                  : " Pendiente",
+                              style: TextStyle(
+                                color: snapshot.data![index - 1].resolved
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () => {},
+                              child: Icon(Icons.edit_square),
+                            ),
+                            Spacer(),
+                            ElevatedButton(
+                              onPressed: () => {},
+                              child: Icon(Icons.delete_forever),
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStatePropertyAll(Colors.red)),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

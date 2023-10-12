@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_app/routes/home_route.dart";
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -17,7 +17,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomeRoute(),
     );
   }
