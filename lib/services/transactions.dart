@@ -33,3 +33,14 @@ Future<http.Response> deleteTransaction(int id) async {
   final response = await http.delete(url);
   return response;
 }
+
+/// Converts the Transaction to JSON & sends a PUT request with it, then return its Response
+Future<http.Response> editTransaction(Transaction newTransaction) async {
+  final url = Uri.parse("http://localhost:8000/transactions/");
+  final response = await http.put(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(newTransaction),
+  );
+  return response;
+}
