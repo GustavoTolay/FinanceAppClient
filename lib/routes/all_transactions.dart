@@ -135,7 +135,9 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ),
                             Spacer(),
                             ElevatedButton(
-                              onPressed: () => {},
+                              onPressed: () => {
+                                deleteTransaction(snapshot.data![index - 1].id)
+                              },
                               child: Icon(Icons.delete_forever),
                               style: ButtonStyle(
                                   backgroundColor:
