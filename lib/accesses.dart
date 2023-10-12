@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:flutter_app/routes/transactions_route.dart";
+import 'package:flutter_app/routes/all_transactions.dart';
 
 class AccessesWidget extends StatelessWidget {
   const AccessesWidget({
