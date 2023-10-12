@@ -1,33 +1,8 @@
 import "package:flutter/material.dart";
+import 'package:flutter_app/services/categories.dart';
 import 'package:flutter_app/services/handle_responses.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import "package:flutter_app/schemas.dart";
-
-// Fetch all categories & convert response JSON to Object
-Future<List<Category>> fetchData() async {
-  final url = Uri.parse("http://localhost:8000/categories");
-  final response = await http.get(url);
-  final List<dynamic> decodedList = jsonDecode(response.body);
-  final List<Category> categoryList = [];
-  for (var category in decodedList) {
-    categoryList.add(
-      Category.fromJson(category),
-    );
-  }
-  return categoryList;
-}
-
-// Create a new Transaction
-Future<http.Response> postTransaction(NewTransaction newTransaction) async {
-  final url = Uri.parse("http://localhost:8000/transactions/");
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode(newTransaction),
-  );
-  return response;
-}
+import 'package:flutter_app/services/transactions.dart';
 
 class CreateTransaction extends StatefulWidget {
   const CreateTransaction({
@@ -55,7 +30,7 @@ class _CreateTransactionState extends State<CreateTransaction> {
   @override
   void initState() {
     super.initState();
-    categoryData = fetchData();
+    categoryData = getAllCategories();
   }
 
   @override

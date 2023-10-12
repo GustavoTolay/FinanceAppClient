@@ -1,23 +1,7 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart" as http;
 import "package:flutter_app/schemas.dart";
 import 'package:flutter_app/routes/create_transaction.dart';
-
-var url = Uri.parse("http://localhost:8000/transactions");
-
-Future<List<Transaction>> fetchData() async {
-  final response = await http.get(url);
-  final List<dynamic> decodedList = jsonDecode(response.body);
-  final List<Transaction> transactionList = [];
-  decodedList.forEach((transaction) {
-    transactionList.add(
-      Transaction.fromJson(transaction),
-    );
-  });
-  return transactionList;
-}
+import 'package:flutter_app/services/transactions.dart';
 
 class TransactionRoute extends StatefulWidget {
   TransactionRoute({
@@ -34,7 +18,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
   @override
   void initState() {
     super.initState();
-    TransactionData = fetchData();
+    TransactionData = getAllTransactions();
   }
 
   Widget build(BuildContext context) {
