@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter_app/services/handle_responses.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import "package:flutter_app/schemas.dart";
@@ -201,17 +202,8 @@ class _CreateTransactionState extends State<CreateTransaction> {
                       is_income: is_income,
                     );
                     final response = await postTransaction(formValues);
-                    if (response.statusCode == 200) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Transacción agregada :v'),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Error crítico :p')),
-                      );
-                    }
+                    if (!context.mounted) return;
+                    handleResponse(response, context);
                   }
                 },
                 child: const Padding(
