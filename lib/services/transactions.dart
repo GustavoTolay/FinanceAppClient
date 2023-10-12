@@ -29,7 +29,7 @@ Future<http.Response> postTransaction(NewTransaction newTransaction) async {
 
 /// Sends a delete request with the id of the Transaction & returns its Response
 Future<http.Response> deleteTransaction(int id) async {
-  final url = Uri.parse("http://localhost:8000/transactions/");
+  final url = Uri.parse("http://localhost:8000/transactions/$id");
   final response = await http.delete(url);
   return response;
 }
