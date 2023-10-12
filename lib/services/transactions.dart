@@ -16,7 +16,7 @@ Future<List<Transaction>> getAllTransactions() async {
   return transactionList;
 }
 
-/// Converts a Transaction to JSON, then posts it
+/// Converts a Transaction to JSON, then posts it & returns the Response
 Future<http.Response> postTransaction(NewTransaction newTransaction) async {
   final url = Uri.parse("http://localhost:8000/transactions/");
   final response = await http.post(
@@ -24,5 +24,12 @@ Future<http.Response> postTransaction(NewTransaction newTransaction) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(newTransaction),
   );
+  return response;
+}
+
+/// Sends a delete request with the id of the Transaction & returns its Response
+Future<http.Response> deleteTransaction(int id) async {
+  final url = Uri.parse("http://localhost:8000/transactions/");
+  final response = await http.delete(url);
   return response;
 }
