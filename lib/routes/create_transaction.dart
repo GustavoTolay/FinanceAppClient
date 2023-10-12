@@ -48,9 +48,6 @@ class _CreateTransactionState extends State<CreateTransaction> {
   // Controllers for form's inputs
   final quantity_controller = TextEditingController();
   final concept_controller = TextEditingController();
-  // final category_id_controller = TextEditingController();
-  // final resolved_controller = TextEditingController();
-  // final is_income_controller = TextEditingController();
 
   late Future<List<Category>> categoryData;
 
@@ -174,8 +171,9 @@ class _CreateTransactionState extends State<CreateTransaction> {
                           return null;
                         },
                         onChanged: (value) {
-                          if (value != null && value.isNotEmpty)
+                          if (value != null && value.isNotEmpty) {
                             selectedCategory = int.parse(value);
+                          }
                         },
                         items: snapshot.data!.map<DropdownMenuItem<String>>(
                           (category) {
@@ -214,7 +212,6 @@ class _CreateTransactionState extends State<CreateTransaction> {
                         const SnackBar(content: Text('Error crítico :p')),
                       );
                     }
-                    print(response.statusCode);
                   }
                 },
                 child: const Padding(
