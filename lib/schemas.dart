@@ -1,22 +1,41 @@
-class Transaction {
-  final int id;
+class NewTransaction {
   final String concept;
   final int category_id;
-  final Category category;
   final int quantity;
   final bool resolved;
   final bool is_income;
-  final String created;
 
-  const Transaction({
-    required this.id,
+  const NewTransaction({
     required this.concept,
-    required this.category,
     required this.category_id,
     required this.quantity,
     required this.resolved,
     required this.is_income,
+  });
+
+  Map<String, dynamic> toJson() => {
+    "concept": concept,
+    "category_id": category_id,
+    "quantity": quantity,
+    "resolved": resolved,
+    "is_income": is_income,
+  };
+}
+
+class Transaction extends NewTransaction {
+  final int id;
+  final Category category;
+  final String created;
+
+  const Transaction({
+    required this.id,
+    required this.category,
     required this.created,
+    required super.concept,
+    required super.category_id,
+    required super.quantity,
+    required super.resolved,
+    required super.is_income,
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
