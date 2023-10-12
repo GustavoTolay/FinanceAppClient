@@ -50,6 +50,16 @@ class Transaction extends NewTransaction {
       created: json["created"],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    "concept": concept,
+    "category_id": category_id,
+    "quantity": quantity,
+    "resolved": resolved,
+    "is_income": is_income,
+    "created": created,
+  };
 }
 
 class Category {
