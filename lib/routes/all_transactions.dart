@@ -4,7 +4,7 @@ import 'package:flutter_app/routes/create_transaction.dart';
 import 'package:flutter_app/services/transactions.dart';
 
 class TransactionRoute extends StatefulWidget {
-  TransactionRoute({
+  const TransactionRoute({
     super.key,
   });
 
@@ -13,14 +13,15 @@ class TransactionRoute extends StatefulWidget {
 }
 
 class _TransactionRouteState extends State<TransactionRoute> {
-  late Future<List<Transaction>> TransactionData;
+  late Future<List<Transaction>> transactionData;
 
   @override
   void initState() {
     super.initState();
-    TransactionData = getAllTransactions();
+    transactionData = getAllTransactions();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -28,7 +29,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
         title: const Text("Transacciones"),
       ),
       body: FutureBuilder(
-        future: TransactionData,
+        future: transactionData,
         builder: (context, snapshot) {
           if (snapshot.hasError) return const Text("error in the fetch");
           if (snapshot.hasData) {
@@ -41,7 +42,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateTransaction(),
+                          builder: (context) => const CreateTransaction(),
                         ),
                       ),
                       icon: const Icon(Icons.dashboard_customize_rounded),
@@ -126,22 +127,24 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ),
                           ],
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Row(
                           children: [
                             ElevatedButton(
                               onPressed: () => {},
-                              child: Icon(Icons.edit_square),
+                              child: const Icon(Icons.edit_square),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             ElevatedButton(
                               onPressed: () => {
                                 deleteTransaction(snapshot.data![index - 1].id)
                               },
-                              child: Icon(Icons.delete_forever),
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.red)),
+                              style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                  Colors.red,
+                                ),
+                              ),
+                              child: const Icon(Icons.delete_forever),
                             ),
                           ],
                         ),
