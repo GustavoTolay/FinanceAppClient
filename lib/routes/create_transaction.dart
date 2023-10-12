@@ -4,9 +4,8 @@ import 'package:http/http.dart' as http;
 import "package:flutter_app/schemas.dart";
 
 // Fetch all categories & convert response JSON to Object
-var url = Uri.parse("http://localhost:8000/categories");
-
 Future<List<Category>> fetchData() async {
+  final url = Uri.parse("http://localhost:8000/categories");
   final response = await http.get(url);
   final List<dynamic> decodedList = jsonDecode(response.body);
   final List<Category> categoryList = [];
@@ -16,6 +15,17 @@ Future<List<Category>> fetchData() async {
     );
   }
   return categoryList;
+}
+
+// Create a new Transaction
+Future<http.Response> postTransaction(NewTransaction newTransaction) async {
+  final url = Uri.parse("http://localhost:8000/transactions/");
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(newTransaction),
+  );
+  return response;
 }
 
 class CreateTransaction extends StatefulWidget {
@@ -29,11 +39,18 @@ class CreateTransaction extends StatefulWidget {
 
 class _CreateTransactionState extends State<CreateTransaction> {
   final _formKey = GlobalKey<FormState>();
-  // Variables to form checkboxes
+
+  // Variables to form's checkboxes and select
   bool is_income = false;
   bool resolved = false;
+  late int selectedCategory;
 
-  late String selectedCategory;
+  // Controllers for form's inputs
+  final quantity_controller = TextEditingController();
+  final concept_controller = TextEditingController();
+  // final category_id_controller = TextEditingController();
+  // final resolved_controller = TextEditingController();
+  // final is_income_controller = TextEditingController();
 
   late Future<List<Category>> categoryData;
 
@@ -41,6 +58,13 @@ class _CreateTransactionState extends State<CreateTransaction> {
   void initState() {
     super.initState();
     categoryData = fetchData();
+  }
+
+  @override
+  void dispose() {
+    quantity_controller.dispose();
+    concept_controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,6 +96,7 @@ class _CreateTransactionState extends State<CreateTransaction> {
                   }
                   return null;
                 },
+                controller: quantity_controller,
               ),
             ),
             Padding(
@@ -83,8 +108,7 @@ class _CreateTransactionState extends State<CreateTransaction> {
                 ),
                 validator: (value) {
                   // Only words/numbers separated by one space and , or .
-                  final pattern =
-                      RegExp(r"^([A-Za-z0-9],?\.?[ ]?)+$");
+                  final pattern = RegExp(r"^([A-Za-z0-9],?\.?[ ]?)+$");
                   if (value == null || value.isEmpty) {
                     return "Completa este campo";
                   }
@@ -93,6 +117,7 @@ class _CreateTransactionState extends State<CreateTransaction> {
                   }
                   return null;
                 },
+                controller: concept_controller,
               ),
             ),
             Padding(
@@ -148,7 +173,10 @@ class _CreateTransactionState extends State<CreateTransaction> {
                           }
                           return null;
                         },
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          if (value != null && value.isNotEmpty)
+                            selectedCategory = int.parse(value);
+                        },
                         items: snapshot.data!.map<DropdownMenuItem<String>>(
                           (category) {
                             return DropdownMenuItem<String>(
@@ -165,11 +193,28 @@ class _CreateTransactionState extends State<CreateTransaction> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Validated Form')),
+                    final formValues = NewTransaction(
+                      concept: concept_controller.text,
+                      category_id: selectedCategory,
+                      quantity: int.parse(quantity_controller.text),
+                      resolved: resolved,
+                      is_income: is_income,
                     );
+                    final response = await postTransaction(formValues);
+                    if (response.statusCode == 200) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Transacción agregada :v'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Error crítico :p')),
+                      );
+                    }
+                    print(response.statusCode);
                   }
                 },
                 child: const Padding(
