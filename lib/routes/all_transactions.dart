@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter_app/schemas.dart";
 import 'package:flutter_app/routes/create_transaction.dart';
 import 'package:flutter_app/services/transactions.dart';
+import 'package:flutter_app/services/handle_responses.dart';
+import 'package:http/http.dart';
 
 class TransactionRoute extends StatefulWidget {
   const TransactionRoute({
@@ -14,6 +16,7 @@ class TransactionRoute extends StatefulWidget {
 
 class _TransactionRouteState extends State<TransactionRoute> {
   late Future<List<Transaction>> transactionData;
+  late Response response;
 
   @override
   void initState() {
@@ -131,13 +134,15 @@ class _TransactionRouteState extends State<TransactionRoute> {
                         Row(
                           children: [
                             ElevatedButton(
-                              onPressed: () => {},
+                              onPressed: () {},
                               child: const Icon(Icons.edit_square),
                             ),
                             const Spacer(),
                             ElevatedButton(
-                              onPressed: () => {
-                                deleteTransaction(snapshot.data![index - 1].id)
+                              onPressed: () async {
+                                response = await deleteTransaction(snapshot.data![index - 1].id);
+                                if(!context.mounted) return;
+                                handleResponse(response, context);
                               },
                               style: const ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
