@@ -100,8 +100,8 @@ class _TransactionRouteState extends State<TransactionRoute> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
-                            Text(snapshot.data![index - 1].category.name
-                                .toString())
+                            Text(snapshot.data![index - 1].category!.name
+                                .toString()),
                           ],
                         ),
                         Row(
@@ -133,15 +133,25 @@ class _TransactionRouteState extends State<TransactionRoute> {
                         const Spacer(),
                         Row(
                           children: [
+                            // Edit button
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CreateTransaction(transactionData: snapshot.data![index - 1]),
+                                ),
+                              ),
                               child: const Icon(Icons.edit_square),
                             ),
                             const Spacer(),
+                            // Delete button
                             ElevatedButton(
                               onPressed: () async {
-                                response = await deleteTransaction(snapshot.data![index - 1].id);
-                                if(!context.mounted) return;
+                                response = await deleteTransaction(
+                                  snapshot.data![index - 1].id,
+                                );
+                                if (!context.mounted) return;
                                 handleResponse(response, context);
                               },
                               style: const ButtonStyle(
