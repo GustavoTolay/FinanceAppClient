@@ -5,8 +5,8 @@ import "package:flutter_app/schemas.dart";
 import 'package:flutter_app/services/transactions.dart';
 
 class CreateTransaction extends StatefulWidget {
-  /// Renders a Form, fills its inputs with transactionData's values and makes a POST request on submit.
-  /// If transactionData is null, leaves the form with "default" values and makes a PUT request.
+  /// Renders a Form, fills its inputs with transactionData's values and makes a PUT request on submit.
+  /// If transactionData is null, leaves the form with "default" values and makes a POST request.
   const CreateTransaction({
     this.transactionData,
     super.key,
