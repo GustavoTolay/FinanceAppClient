@@ -1,26 +1,12 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart" as http;
 import "package:flutter_app/schemas.dart";
 import 'package:flutter_app/routes/create_transaction.dart';
-
-var url = Uri.parse("http://localhost:8000/transactions");
-
-Future<List<Transaction>> fetchData() async {
-  final response = await http.get(url);
-  final List<dynamic> decodedList = jsonDecode(response.body);
-  final List<Transaction> transactionList = [];
-  decodedList.forEach((transaction) {
-    transactionList.add(
-      Transaction.fromJson(transaction),
-    );
-  });
-  return transactionList;
-}
+import 'package:flutter_app/services/transactions.dart';
+import 'package:flutter_app/services/handle_responses.dart';
+import 'package:http/http.dart';
 
 class TransactionRoute extends StatefulWidget {
-  TransactionRoute({
+  const TransactionRoute({
     super.key,
   });
 
@@ -29,14 +15,16 @@ class TransactionRoute extends StatefulWidget {
 }
 
 class _TransactionRouteState extends State<TransactionRoute> {
-  late Future<List<Transaction>> TransactionData;
+  late Future<List<Transaction>> transactionData;
+  late Response response;
 
   @override
   void initState() {
     super.initState();
-    TransactionData = fetchData();
+    transactionData = getAllTransactions();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +32,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
         title: const Text("Transacciones"),
       ),
       body: FutureBuilder(
-        future: TransactionData,
+        future: transactionData,
         builder: (context, snapshot) {
           if (snapshot.hasError) return const Text("error in the fetch");
           if (snapshot.hasData) {
@@ -57,7 +45,7 @@ class _TransactionRouteState extends State<TransactionRoute> {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateTransaction(),
+                          builder: (context) => const CreateTransaction(),
                         ),
                       ),
                       icon: const Icon(Icons.dashboard_customize_rounded),
@@ -112,8 +100,8 @@ class _TransactionRouteState extends State<TransactionRoute> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
-                            Text(snapshot.data![index - 1].category.name
-                                .toString())
+                            Text(snapshot.data![index - 1].category!.name
+                                .toString()),
                           ],
                         ),
                         Row(
@@ -142,20 +130,36 @@ class _TransactionRouteState extends State<TransactionRoute> {
                             ),
                           ],
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Row(
                           children: [
+                            // Edit button
                             ElevatedButton(
-                              onPressed: () => {},
-                              child: Icon(Icons.edit_square),
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CreateTransaction(transactionData: snapshot.data![index - 1]),
+                                ),
+                              ),
+                              child: const Icon(Icons.edit_square),
                             ),
-                            Spacer(),
+                            const Spacer(),
+                            // Delete button
                             ElevatedButton(
-                              onPressed: () => {},
-                              child: Icon(Icons.delete_forever),
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStatePropertyAll(Colors.red)),
+                              onPressed: () async {
+                                response = await deleteTransaction(
+                                  snapshot.data![index - 1].id,
+                                );
+                                if (!context.mounted) return;
+                                handleResponse(response, context);
+                              },
+                              style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                  Colors.red,
+                                ),
+                              ),
+                              child: const Icon(Icons.delete_forever),
                             ),
                           ],
                         ),

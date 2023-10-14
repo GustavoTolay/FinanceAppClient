@@ -2,10 +2,10 @@ class NewTransaction {
   final String concept;
   final int category_id;
   final int quantity;
-  final bool resolved;
-  final bool is_income;
+  bool resolved;
+  bool is_income;
 
-  const NewTransaction({
+  NewTransaction({
     required this.concept,
     required this.category_id,
     required this.quantity,
@@ -24,12 +24,12 @@ class NewTransaction {
 
 class Transaction extends NewTransaction {
   final int id;
-  final Category category;
+  final Category? category;
   final String created;
 
-  const Transaction({
+  Transaction({
     required this.id,
-    required this.category,
+    this.category,
     required this.created,
     required super.concept,
     required super.category_id,
@@ -50,6 +50,16 @@ class Transaction extends NewTransaction {
       created: json["created"],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    "concept": concept,
+    "category_id": category_id,
+    "quantity": quantity,
+    "resolved": resolved,
+    "is_income": is_income,
+    "created": created,
+  };
 }
 
 class Category {
