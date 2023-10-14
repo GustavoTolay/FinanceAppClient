@@ -5,9 +5,14 @@ import "package:flutter_app/schemas.dart";
 import 'package:flutter_app/services/transactions.dart';
 
 class CreateTransaction extends StatefulWidget {
+  /// Renders a Form, fills its inputs with transactionData's values and makes a POST request on submit.
+  /// If transactionData is null, leaves the form with "default" values and makes a PUT request.
   const CreateTransaction({
+    this.transactionData,
     super.key,
   });
+
+  final Transaction? transactionData;
 
   @override
   State<CreateTransaction> createState() => _CreateTransactionState();
@@ -16,21 +21,31 @@ class CreateTransaction extends StatefulWidget {
 class _CreateTransactionState extends State<CreateTransaction> {
   final _formKey = GlobalKey<FormState>();
 
-  // Variables to form's checkboxes and select
-  bool is_income = false;
-  bool resolved = false;
+  // Variable for form's select
   late int selectedCategory;
 
-  // Controllers for form's inputs
+  late Future<List<Category>> categoryData;
+  late NewTransaction formValues;
+
+  // Controllers for form's text inputs
   final quantity_controller = TextEditingController();
   final concept_controller = TextEditingController();
-
-  late Future<List<Category>> categoryData;
 
   @override
   void initState() {
     super.initState();
     categoryData = getAllCategories();
+    // If there's transactionData fills the form with its values, else leaves the form with "default" values.
+    formValues = widget.transactionData ??
+        NewTransaction(
+          concept: "",
+          category_id: 0,
+          quantity: 0,
+          resolved: false,
+          is_income: false,
+        );
+    quantity_controller.text = formValues.quantity.toString();
+    concept_controller.text = formValues.concept;
   }
 
   @override
@@ -64,8 +79,8 @@ class _CreateTransactionState extends State<CreateTransaction> {
                   if (value == null || value.isEmpty) {
                     return "Completa este campo";
                   }
-                  if (!pattern.hasMatch(value)) {
-                    return "Solo un número entero";
+                  if (!pattern.hasMatch(value) || value == 0.toString()) {
+                    return "Solo un número entero distinto de cero";
                   }
                   return null;
                 },
@@ -98,10 +113,10 @@ class _CreateTransactionState extends State<CreateTransaction> {
               child: FormField(
                 builder: (FormFieldState<dynamic> field) {
                   return CheckboxListTile(
-                    value: is_income,
+                    value: formValues.is_income,
                     onChanged: (value) {
                       setState(() {
-                        is_income = value!;
+                        formValues.is_income = value!;
                       });
                     },
                     title: const Text("Es ingreso?"),
@@ -116,10 +131,10 @@ class _CreateTransactionState extends State<CreateTransaction> {
               child: FormField(
                 builder: (FormFieldState<dynamic> field) {
                   return CheckboxListTile(
-                    value: resolved,
+                    value: formValues.resolved,
                     onChanged: (value) {
                       setState(() {
-                        resolved = value!;
+                        formValues.resolved = value!;
                       });
                     },
                     title: const Text("Está concretado?"),
@@ -146,6 +161,9 @@ class _CreateTransactionState extends State<CreateTransaction> {
                           }
                           return null;
                         },
+                        value: formValues.category_id == 0
+                            ? null
+                            : formValues.category_id.toString(),
                         onChanged: (value) {
                           if (value != null && value.isNotEmpty) {
                             selectedCategory = int.parse(value);
@@ -169,16 +187,32 @@ class _CreateTransactionState extends State<CreateTransaction> {
               child: ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    final formValues = NewTransaction(
-                      concept: concept_controller.text,
-                      category_id: selectedCategory,
-                      quantity: int.parse(quantity_controller.text),
-                      resolved: resolved,
-                      is_income: is_income,
-                    );
-                    final response = await postTransaction(formValues);
-                    if (!context.mounted) return;
-                    handleResponse(response, context);
+                    // Makes a POST request if there isn't transactionData, else makes a PUT request
+                    if (widget.transactionData == null) {
+                      final formPostValues = NewTransaction(
+                        concept: concept_controller.text,
+                        category_id: selectedCategory,
+                        quantity: int.parse(quantity_controller.text),
+                        resolved: formValues.resolved,
+                        is_income: formValues.is_income,
+                      );
+                      final response = await postTransaction(formPostValues);
+                      if (!context.mounted) return;
+                      handleResponse(response, context);
+                    } else {
+                      final formPutValues = Transaction(
+                        id: widget.transactionData!.id,
+                        created: widget.transactionData!.created,
+                        concept: concept_controller.text,
+                        category_id: selectedCategory,
+                        quantity: int.parse(quantity_controller.text),
+                        resolved: formValues.resolved,
+                        is_income: formValues.is_income,
+                      );
+                      final response = await putTransaction(formPutValues);
+                      if (!context.mounted) return;
+                      handleResponse(response, context);
+                    }
                   }
                 },
                 child: const Padding(
